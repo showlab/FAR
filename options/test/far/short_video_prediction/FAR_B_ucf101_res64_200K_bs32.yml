@@ -1,0 +1,87 @@
+name: FAR_B_ucf101_res64_200K_bs32
+manual_seed: 0
+mixed_precision: bf16
+
+# dataset and data loader settings
+datasets:
+  train:
+    type: UCFDataset
+    data_list: datasets/ucf101/train03.json
+    split: training
+    data_cfg:
+      n_frames: 16
+      resolution: 64
+      frame_interval: 1
+      use_flip: true
+    batch_size_per_gpu: 4
+
+  sample:
+    type: UCFDataset
+    data_list: datasets/ucf101/test03.json
+    split: validation
+    data_cfg:
+      n_frames: 16
+      resolution: 64
+      frame_interval: 1
+      evaluation_type: MCVD
+    num_sample: 256
+    batch_size_per_gpu: 2
+
+models:
+  model_cfg:
+    transformer:
+      from_pretrained: ~ # diffusers pretrained path (from_pretrained)
+      init_cfg:
+        type: FAR_B
+        pretrained_path: experiments/pretrained_models/FAR_Models/short_video_prediction/FAR_B_UCF101_Uncond64-381d295f.pth
+    vae:
+      type: MyAutoencoderDC
+      from_config: options/model_cfg/dcae/model_8x_c32_config.json
+      from_config_pretrained: experiments/pretrained_models/FAR_Models/dcae/DCAE_UCF101_Res64-9da18dcf.pth
+    scheduler:
+      from_pretrained: options/model_cfg/far/scheduler_config.json
+  clean_context_ratio: 0.1
+  weighting_scheme: logit_normal
+
+# path
+path:
+  pretrain_network: ~
+
+# training settings
+train:
+  train_pipeline: FARTrainer
+
+  optim_g:
+    type: AdamW
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [ 0.9, 0.999 ]
+
+  param_names_to_optimize: ~
+  ema_decay: 0.9999
+
+  lr_scheduler: constant_with_warmup
+  warmup_iter: 0
+  total_iter: 200000
+  max_grad_norm: 1.0
+
+# validation settings
+val:
+  val_pipeline: FARPipeline
+  val_freq: 20000
+  sample_cfg:
+    context_length: 4
+    unroll_length: 12
+    guidance_scale: 1.0
+    num_inference_steps: 50
+    sample_size: 8
+    sample_trajectory_per_video: 100
+    anno_context: false
+  eval_cfg:
+    metrics: ['mse', 'psnr', 'ssim', 'fvd', 'lpips']
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 20000
+  use_wandb: false

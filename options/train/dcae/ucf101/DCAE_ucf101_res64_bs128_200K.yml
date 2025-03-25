@@ -1,0 +1,78 @@
+name: dcae_ucf101_size64_bs128_200K
+manual_seed: 0
+mixed_precision: bf16
+
+# dataset and data loader settings
+datasets:
+  train:
+    type: UCFDataset
+    data_list: datasets/ucf101/train03.json
+    split: training
+    data_cfg:
+      n_frames: 4
+      resolution: 64
+      frame_skip: 2
+    batch_size_per_gpu: 16
+
+  sample:
+    type: UCFDataset
+    data_list: datasets/ucf101/test03.json
+    split: validation
+    data_cfg:
+      n_frames: 4
+      resolution: 64
+      frame_skip: 2
+    num_sample: 32
+    batch_size_per_gpu: 16
+
+models:
+  model_cfg:
+    vae:
+      type: MyAutoencoderDC
+      from_config: options/model_cfg/dcae/model_8x_c32_config.json
+  perceptual_weight: 1.0
+  disc_weight: 0.5
+  disc_start_iter: 100000
+
+# path
+path:
+  pretrain_network: ~
+
+# training settings
+train:
+  train_pipeline: DCAETrainer
+
+  optim_g:
+    type: AdamW
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [ 0.5, 0.9 ]
+
+  optim_d:
+    type: AdamW
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [ 0.5, 0.9 ]
+
+  param_names_to_optimize: ~
+  ema_decay: 0.9999
+
+  lr_scheduler: constant_with_warmup
+  warmup_iter: 0
+  total_iter: 200000
+  max_grad_norm: 1.0
+
+# validation settings
+val:
+  val_pipeline: ~
+  val_freq: 10000
+  sample_cfg:
+    context_length: 0
+  eval_cfg:
+    metrics: ['mse', 'psnr', 'ssim', 'lpips']
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 50000
+  use_wandb: true

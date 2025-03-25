@@ -1,0 +1,80 @@
+{
+  "_class_name": "AutoencoderDC",
+  "_diffusers_version": "0.32.0.dev0",
+  "attention_head_dim": 32,
+  "decoder_act_fns": [
+    "relu",
+    "relu",
+    "relu",
+    "silu",
+    "silu"
+  ],
+  "decoder_block_out_channels": [
+    128,
+    256,
+    512,
+    512,
+    1024
+  ],
+  "decoder_block_types": [
+    "ResBlock",
+    "ResBlock",
+    "ResBlock",
+    "EfficientViTBlock",
+    "EfficientViTBlock"
+  ],
+  "decoder_layers_per_block": [
+    0,
+    5,
+    10,
+    2,
+    2
+  ],
+  "decoder_norm_types": [
+    "batch_norm",
+    "batch_norm",
+    "batch_norm",
+    "rms_norm",
+    "rms_norm"
+  ],
+  "decoder_qkv_multiscales": [
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "downsample_block_type": "pixel_unshuffle",
+  "encoder_block_out_channels": [
+    128,
+    256,
+    512,
+    512,
+    1024
+  ],
+  "encoder_block_types": [
+    "ResBlock",
+    "ResBlock",
+    "ResBlock",
+    "EfficientViTBlock",
+    "EfficientViTBlock"
+  ],
+  "encoder_layers_per_block": [
+    0,
+    4,
+    8,
+    2,
+    2
+  ],
+  "encoder_qkv_multiscales": [
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "in_channels": 3,
+  "latent_channels": 32,
+  "scaling_factor": 0.2889,
+  "upsample_block_type": "pixel_shuffle"
+}

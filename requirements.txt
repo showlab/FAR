@@ -1,0 +1,14 @@
+accelerate==1.4.0
+decord==0.6.0
+diffusers==0.32.2
+einops==0.8.1
+imageio==2.37.0
+imageio-ffmpeg==0.6.0
+lpips==0.1.4
+omegaconf==2.3.0
+pytorchvideo==0.1.5
+torch-fidelity==0.3.0
+torchmetrics==1.6.1
+transformers==4.49.0
+wandb==0.19.7
+wandb[media]

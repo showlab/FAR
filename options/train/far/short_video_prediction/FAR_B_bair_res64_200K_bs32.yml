@@ -1,0 +1,87 @@
+name: FAR_B_bair_res64_200K_bs32
+manual_seed: 0
+mixed_precision: bf16
+
+# dataset and data loader settings
+datasets:
+  train:
+    type: BairDataset
+    data_list: datasets/bair/bair_train.json
+    split: training
+    data_cfg:
+      n_frames: 30
+      resolution: 64
+      frame_interval: 1
+    batch_size_per_gpu: 4
+
+  sample:
+    type: BairDataset
+    data_list: datasets/bair/bair_val.json
+    split: validation
+    data_cfg:
+      n_frames: 30
+      resolution: 64
+      frame_interval: 1
+    num_sample: 256
+    batch_size_per_gpu: 16
+
+models:
+  model_cfg:
+    transformer:
+      from_pretrained: ~ # diffusers pretrained path (from_pretrained)
+      init_cfg:
+        type: FAR_B
+        config: {
+          "short_term_ctx_winsize": 30
+        }
+    vae:
+      type: MyAutoencoderDC
+      from_config: options/model_cfg/dcae/model_8x_c32_config.json
+      from_config_pretrained: experiments/pretrained_models/FAR_Models/dcae/bair/DCAE_bair_res64_bs128_200K/models/checkpoint-200000/ema.pth
+    scheduler:
+      from_pretrained: options/model_cfg/far/scheduler_config.json
+  clean_context_ratio: 0.1
+  weighting_scheme: logit_normal
+  training_type: base
+
+# path
+path:
+  pretrain_network: ~
+
+# training settings
+train:
+  train_pipeline: FARTrainer
+
+  optim_g:
+    type: AdamW
+    lr: !!float 1e-4
+    weight_decay: 0
+    betas: [ 0.9, 0.999 ]
+
+  param_names_to_optimize: ~
+  ema_decay: 0.9999
+
+  lr_scheduler: constant_with_warmup
+  warmup_iter: 0
+  total_iter: 200000
+  max_grad_norm: 1.0
+
+# validation settings
+val:
+  val_pipeline: FARPipeline
+  val_freq: 20000
+  sample_cfg:
+    context_length: 2
+    unroll_length: 28
+    guidance_scale: 1.0
+    num_inference_steps: 50
+    sample_size: 8
+    sample_trajectory_per_video: 1
+  eval_cfg:
+    metrics: ['mse', 'psnr', 'ssim', 'fvd', 'lpips']
+
+# logging settings
+logger:
+  print_freq: 100
+  save_checkpoint_freq: !!float 20000
+  use_wandb: false
