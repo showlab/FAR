@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Project Page](https://img.shields.io/badge/Project-Website-orange)](https://farlongctx.github.io/)
-[![arXiv](https://img.shields.io/badge/arXiv-2503.xxxxx-b31b1b.svg)](https://arxiv.org/abs/2503.xxxxx)&nbsp;
+[![arXiv](https://img.shields.io/badge/arXiv-2503.19325-b31b1b.svg)](https://arxiv.org/abs/2503.19325)&nbsp;
 [![huggingface weights](https://img.shields.io/badge/%F0%9F%A4%97%20Weights-FAR-yellow)](https://huggingface.co/guyuchao/FAR_Models)&nbsp;
 
 
@@ -11,7 +11,7 @@
 
 
 <p align="center" style="font-size: larger;">
-  <a href="https://arxiv.org/abs/2404.02905">Long-Context Autoregressive Video Modeling with Next-Frame Prediction</a>
+  <a href="https://arxiv.org/abs/2503.19325">Long-Context Autoregressive Video Modeling with Next-Frame Prediction</a>
 </p>
 
 ![dmlab_sample](./assets/dmlab_sample.png)
@@ -55,7 +55,7 @@ Unconditional pretraining on UCF-101 achieves state-of-the-art results in both v
 <img src="./assets/long_short_term_ctx.jpg" width=55%>
 <p>
 
-#### 📚 For more details, check out our [paper](https://arxiv.org/abs/2503.xxx).
+#### 📚 For more details, check out our [paper](https://arxiv.org/abs/2503.19325).
 
 
 ## 🏋️‍♂️ FAR Model Zoo
@@ -196,7 +196,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📖 Citation
 If our work assists your research, feel free to give us a star ⭐ or cite us using:
 ```
-@Article{FAR,
-      title={}
+@article{gu2025long,
+    title={Long-Context Autoregressive Video Modeling with Next-Frame Prediction},
+    author={Gu, Yuchao and Mao, weijia and Shou, Mike Zheng},
+    journal={arXiv preprint arXiv:2503.19325},
+    year={2025}
 }
 ```
