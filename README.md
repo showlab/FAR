@@ -25,7 +25,7 @@
 
 ### 🔥 Introducing FAR: a new baseline for autoregressive video generation
 
-FAR (i.e., <u>**F**</u>rame <u>**A**</u>utoregressive <u>**M**</u>odel) learns to predict continuous frames based on an autoregressive context. Its objective aligns well with video modeling, similar to the next-token prediction in language modeling.
+FAR (i.e., <u>**F**</u>rame <u>**A**</u>uto<u>**R**</u>egressive Model) learns to predict continuous frames based on an autoregressive context. Its objective aligns well with video modeling, similar to the next-token prediction in language modeling.
 
 ![dmlab_sample](./assets/pipeline.png)
 
