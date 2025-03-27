@@ -374,18 +374,18 @@ class FAR_Long(ModelMixin, ConfigMixin):
 
         row_idx = frame_idx.unsqueeze(1)  # shape: (total_seq_len, 1)
         col_idx = frame_idx.unsqueeze(0)  # shape: (1, total_seq_len)
-        attention_mask = (row_idx >= col_idx).unsqueeze(0).repeat((self.config.num_attention_heads, 1, 1))  # shape: (1, total_seq_len, total_seq_len)
+        attention_mask = (row_idx >= col_idx).unsqueeze(0)
 
         attn_mask = torch.zeros(attention_mask.shape, dtype=dtype, device=device)
         attn_mask.masked_fill_(attention_mask.logical_not(), float('-inf'))
 
         # get relative bias
-        abili_bias = (frame_idx.unsqueeze(0) - frame_idx.unsqueeze(1)).unsqueeze(0)
+        linear_bias = (frame_idx.unsqueeze(0) - frame_idx.unsqueeze(1)).unsqueeze(0)
 
-        abili_bias = (self.config.slope_scale * abili_bias)
-        abili_bias.masked_fill_(attention_mask.logical_not(), 0)
+        linear_bias = self.config.slope_scale * linear_bias
+        linear_bias.masked_fill_(attention_mask.logical_not(), 0)
 
-        attn_mask += abili_bias
+        attn_mask += linear_bias
 
         return attn_mask
 
