@@ -148,13 +148,12 @@ We have uploaded the pretrained models of FAR to Hugging Face models. Please fol
 ```bash
 from huggingface_hub import snapshot_download, hf_hub_download
 
-for key, url in dataset_url.items():
-    snapshot_download(
-        repo_id="guyuchao/FAR_Models",
-        repo_type="model",
-        local_dir="experiments/pretrained_models/FAR_Models",
-        token="input your hf token here"
-    )
+snapshot_download(
+    repo_id="guyuchao/FAR_Models",
+    repo_type="model",
+    local_dir="experiments/pretrained_models/FAR_Models",
+    token="input your hf token here"
+)
 ```
 
 ## 🚀 Training
