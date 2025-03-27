@@ -330,17 +330,17 @@ class FAR(ModelMixin, ConfigMixin):
         row_idx = idx.unsqueeze(1)  # (seq_len, 1)
         col_idx = idx.unsqueeze(0)  # (1, seq_len)
         # floor(i / N) >= floor(j / N)
-        attention_mask = (row_idx // token_per_frame >= col_idx // token_per_frame).unsqueeze(0).repeat((self.config.num_attention_heads, 1, 1))
+        attention_mask = (row_idx // token_per_frame >= col_idx // token_per_frame).unsqueeze(0)
 
         attn_mask = torch.zeros(attention_mask.shape, device=device)
         attn_mask.masked_fill_(attention_mask.logical_not(), float('-inf'))
 
-        abili_bias = self.config.slope_scale * get_relative_positions(seq_len)
-        abili_bias.masked_fill_(attention_mask.logical_not(), 0)
+        linear_bias = self.config.slope_scale * get_relative_positions(seq_len)
+        linear_bias.masked_fill_(attention_mask.logical_not(), 0)
 
-        attn_mask += abili_bias
+        attn_mask += linear_bias
         return attn_mask
-
+        
     def forward(
         self,
         hidden_states: torch.Tensor,
