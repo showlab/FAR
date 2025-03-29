@@ -387,7 +387,7 @@ class FAR_Long(ModelMixin, ConfigMixin):
 
         attn_mask += linear_bias
 
-        return attn_mask
+        return attn_mask.to(dtype)
 
     def forward(
         self,

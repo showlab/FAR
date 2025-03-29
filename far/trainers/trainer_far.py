@@ -50,8 +50,7 @@ class FARTrainer:
             raise NotImplementedError
         else:
             init_cfg = model_cfg['transformer']['init_cfg']
-            self.model = build_model(
-                init_cfg['type'])(**init_cfg.get('config', {}))
+            self.model = build_model(init_cfg['type'])(**init_cfg.get('config', {}))
             if init_cfg.get('pretrained_path'):
                 state_dict = torch.load(init_cfg['pretrained_path'], map_location='cpu', weights_only=True)
                 self.model.load_state_dict(state_dict)

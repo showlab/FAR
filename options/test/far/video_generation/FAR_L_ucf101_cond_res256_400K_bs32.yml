@@ -39,7 +39,7 @@ models:
             "num_classes": 101
           }
         }
-        pretrained_path: experiments/GeniDiff_Model/FinalExp_FARv2_L_ucf101_cond256_400K_bs32/models_bak/checkpoint-380000/ema.pth
+        pretrained_path: experiments/pretrained_models/FAR_Models/video_generation/FAR_L_UCF101_Cond256-41c6033f.pth
     vae:
       type: MyAutoencoderDC
       from_config: options/model_cfg/dcae/model_32x_c32_config.json

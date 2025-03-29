@@ -159,13 +159,13 @@ class EfficientViTBlock(nn.Module):
 
 
 def get_block(
-        block_type: str,
-        in_channels: int,
-        out_channels: int,
-        attention_head_dim: int,
-        norm_type: str,
-        act_fn: str,
-        qkv_mutliscales: Tuple[int] = (),
+    block_type: str,
+    in_channels: int,
+    out_channels: int,
+    attention_head_dim: int,
+    norm_type: str,
+    act_fn: str,
+    qkv_mutliscales: Tuple[int] = (),
 ):
     if block_type == 'ResBlock':
         block = ResBlock(in_channels, out_channels, norm_type, act_fn)
@@ -630,9 +630,9 @@ class MyAutoencoderDC(ModelMixin, ConfigMixin):
 
     @apply_forward_hook
     def encode(
-            self,
-            x: torch.Tensor,
-            return_dict: bool = True
+        self,
+        x: torch.Tensor,
+        return_dict: bool = True
     ) -> Union[EncoderOutput, Tuple[torch.Tensor]]:
         r"""
         Encode a batch of images into latents.

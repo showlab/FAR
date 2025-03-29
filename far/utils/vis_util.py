@@ -19,8 +19,6 @@ def log_paired_video(
     wandb_cfg=None,
     annotate_context_frame=True
 ):
-    if gt is None:
-        gt = torch.zeros_like(sample)
 
     # Add red border of 1 pixel width to the context frames
     if annotate_context_frame:
@@ -29,10 +27,13 @@ def log_paired_video(
             c = c / 255.0
             sample[:, :, :context_frames, i, [0, -1], :] = c
             sample[:, :, :context_frames, i, :, [0, -1]] = c
-            gt[:, :, :context_frames, i, [0, -1], :] = c
-            gt[:, :, :context_frames, i, :, [0, -1]] = c
-
-    video = torch.cat([sample, gt], dim=-1).detach().cpu().numpy()
+            if gt is not None:
+                gt[:, :, :context_frames, i, [0, -1], :] = c
+                gt[:, :, :context_frames, i, :, [0, -1]] = c
+    if gt is not None:
+        video = torch.cat([sample, gt], dim=-1).float().detach().cpu().numpy()
+    else:
+        video = sample.float().detach().cpu().numpy()
     video = (video.clip(0, 1) * 255).astype(np.uint8)
     video = rearrange(video, 'b n f c h w -> b (n f) h w c')
 

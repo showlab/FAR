@@ -339,7 +339,7 @@ class FAR(ModelMixin, ConfigMixin):
         linear_bias.masked_fill_(attention_mask.logical_not(), 0)
 
         attn_mask += linear_bias
-        return attn_mask
+        return attn_mask.to(dtype)
         
     def forward(
         self,

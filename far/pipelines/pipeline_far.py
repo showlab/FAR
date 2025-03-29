@@ -21,19 +21,10 @@ class FARPipeline(DiffusionPipeline):
         self,
         transformer: DiTTransformer2DModel,
         vae: AutoencoderKL,
-        scheduler: FlowMatchEulerDiscreteScheduler,
-        id2label: Optional[Dict[int, str]] = None,
+        scheduler: FlowMatchEulerDiscreteScheduler
     ):
         super().__init__()
         self.register_modules(transformer=transformer, vae=vae, scheduler=scheduler)
-
-        # create a imagenet -> id dictionary for easier use
-        self.labels = {}
-        if id2label is not None:
-            for key, value in id2label.items():
-                for label in value.split(','):
-                    self.labels[label.lstrip().rstrip()] = int(key)
-            self.labels = dict(sorted(self.labels.items()))
 
     def vae_encode(self, context_sequence):
         # normalize: [0, 1] -> [-1, 1]
