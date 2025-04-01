@@ -171,7 +171,7 @@ accelerate launch \
 
 * **Wandb:** Set ```use_wandb``` to ```True``` in config to enable wandb monitor.
 * **Periodally Evaluation:** Set ```val_freq``` to control the peroidly evaluation in training.
-* **Auto Resume:** Directly rerun the script, the model will find the lastest checkpoint to resume, the wandb log will automatically resume.
+* **Auto Resume:** Directly rerun the script, the model will find the latest checkpoint to resume, the wandb log will automatically resume.
 * **Efficient Training on Pre-Extracted Latent:** Set ```use_latent``` to ```True```, and set the ```data_list``` to corresponding latent path list.
 
 ## 💻 Sampling & Evaluation
