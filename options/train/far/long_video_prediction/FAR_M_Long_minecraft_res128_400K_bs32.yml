@@ -1,4 +1,4 @@
-name: ablation_16frame_rope_warm_action_minecraft_400K_bs32
+name: FAR_M_Long_minecraft_res128_400K_bs32
 manual_seed: 0
 mixed_precision: bf16
 
