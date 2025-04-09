@@ -1,4 +1,4 @@
-name: FAR_B_Long_dmlab_res64_400K_bs32_36to264
+name: FAR_B_Long_dmlab_res64_1000K_bs32_36to264
 manual_seed: 0
 mixed_precision: bf16
 

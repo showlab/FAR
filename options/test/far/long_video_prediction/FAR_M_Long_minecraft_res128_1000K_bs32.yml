@@ -1,4 +1,4 @@
-name: FAR_M_Long_minecraft_res128_400K_bs32
+name: FAR_M_Long_minecraft_res128_1000K_bs32
 manual_seed: 0
 mixed_precision: bf16
 
@@ -36,6 +36,7 @@ models:
             "num_action_classes": 4
           }
         }
+        pretrained_path: experiments/pretrained_models/FAR_Models/long_video_prediction/FAR_M_Long_Minecraft_Action128-4c041561.pth
     vae:
       type: MyAutoencoderDC
       from_config: options/model_cfg/dcae/model_16x_c32_config.json

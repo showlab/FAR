@@ -1,12 +1,12 @@
-name: FAR_B_Long_dmlab_res64_400K_bs32
+name: FAR_M_Long_minecraft_res128_1000K_bs32_36to264
 manual_seed: 0
 mixed_precision: bf16
 
 # dataset and data loader settings
 datasets:
   train:
-    type: DMLabDataset
-    data_list: datasets/dmlab_latent/dmlab_train.json
+    type: MinecraftDataset
+    data_list: datasets/minecraft_latent/minecraft_train.json
     split: training
     use_latent: true
     data_cfg:
@@ -15,8 +15,8 @@ datasets:
     batch_size_per_gpu: 4
 
   sample:
-    type: DMLabDataset
-    data_list: datasets/dmlab/dmlab_val.json
+    type: MinecraftDataset
+    data_list: datasets/minecraft/minecraft_val.json
     split: validation
     data_cfg:
       num_frames: 300
@@ -29,18 +29,18 @@ models:
     transformer:
       from_pretrained: ~ # diffusers pretrained path (from_pretrained)
       init_cfg:
-        type: FAR_B_Long
+        type: FAR_M_Long
         config: {
           "condition_cfg": {
-            'type': 'action',
-            'num_action_classes': 4
+            "type": "action",
+            "num_action_classes": 4
           }
         }
-        pretrained_path: experiments/pretrained_models/FAR_Models/long_video_prediction/FAR_B_Long_DMLab_Action64-c09441dc.pth
+        pretrained_path: experiments/pretrained_models/FAR_Models/long_video_prediction/FAR_M_Long_Minecraft_Action128-4c041561.pth
     vae:
       type: MyAutoencoderDC
-      from_config: options/model_cfg/dcae/model_8x_c32_config.json
-      from_config_pretrained: experiments/pretrained_models/FAR_Models/dcae/DCAE_DMLab_Res64-17035ae5.pth
+      from_config: options/model_cfg/dcae/model_16x_c32_config.json
+      from_config_pretrained: experiments/pretrained_models/FAR_Models/dcae/DCAE_Minecraft_Res128-a5677f66.pth
     scheduler:
       from_pretrained: options/model_cfg/far/scheduler_config.json
   clean_context_ratio: 0.1
@@ -74,13 +74,14 @@ val:
   val_pipeline: FARPipeline
   val_freq: 50000
   sample_cfg:
-    context_length: 144
-    unroll_length: 156
+    context_length: 36
+    unroll_length: 264
     guidance_scale: 1.5
     num_inference_steps: 50
     sample_size: 8
     sample_trajectory_per_video: 1
     use_kv_cache: false
+    anno_context: false
   eval_cfg:
     metrics: ['mse', 'psnr', 'ssim', 'fvd', 'lpips']
 
