@@ -59,7 +59,7 @@ class FARPipeline(DiffusionPipeline):
 
         samples = (samples / 2 + 0.5).clamp(0, 1)
         return samples
-
+    
     @torch.no_grad()
     def generate(
         self,
@@ -71,12 +71,13 @@ class FARPipeline(DiffusionPipeline):
         generator: Optional[Union[torch.Generator, List[torch.Generator]]] = None,
         num_inference_steps: int = 50,
         sample_size=32,
+        batch_size=1,
         use_kv_cache=True,
         output_type: Optional[str] = 'pil',
         return_dict: bool = True,
     ):
         if context_sequence is None:
-            batch_size, current_context_length = 1, 0
+            current_context_length = 0
         else:
             batch_size, current_context_length = context_sequence.shape[0], context_sequence.shape[1]
 
@@ -85,6 +86,15 @@ class FARPipeline(DiffusionPipeline):
         else:
             # step 1: encode vision context to embedding
             latents = self.vae_encode(context_sequence)
+
+        latent_size = sample_size
+        latent_channels = self.transformer.config.in_channels
+        init_latents = randn_tensor(
+            shape=(batch_size, unroll_length, latent_channels, latent_size, latent_size),
+            generator=generator,
+            device=self.execution_device,
+            dtype=self.vae.dtype,
+        )
 
         if use_kv_cache:
             context_cache = {'has_new_context': True, 'kv_cache': {}, 'cached_seqlen': 0}
@@ -102,11 +112,11 @@ class FARPipeline(DiffusionPipeline):
                 conditions=step_condition,
                 vision_context=latents,
                 context_cache=context_cache,
+                latents=init_latents[:, step - current_context_length: step - current_context_length + 1],
                 guidance_scale=guidance_scale,
                 num_inference_steps=num_inference_steps,
-                sample_size=sample_size,
-                batch_size=batch_size,
                 context_timestep_idx=context_timestep_idx)
+            
             if step == 0:
                 latents = pred_latents
             else:
@@ -119,30 +129,17 @@ class FARPipeline(DiffusionPipeline):
     def __call__(
         self,
         vision_context,
+        latents,
         conditions=None,
         context_cache=None,
         context_timestep_idx=-1,
         guidance_scale: float = 4.0,
-        generator: Optional[Union[torch.Generator, List[torch.Generator]]] = None,
         num_inference_steps: int = 50,
-        sample_size=32,
-        batch_size=1,
         output_type: Optional[str] = 'pil',
         return_dict: bool = True,
     ) -> Union[ImagePipelineOutput, Tuple]:
 
-        if vision_context is not None:
-            batch_size = vision_context.shape[0]
-
-        latent_size = sample_size
-        latent_channels = self.transformer.config.in_channels
-
-        latents = randn_tensor(
-            shape=(batch_size, 1, latent_channels, latent_size, latent_size),
-            generator=generator,
-            device=self.execution_device,
-            dtype=self.vae.dtype,
-        )
+        batch_size = latents.shape[0]
 
         if conditions is not None:
             if 'label' in conditions:
@@ -227,3 +224,4 @@ class FARPipeline(DiffusionPipeline):
             latents = self.scheduler.step(noise_pred, t, latents).prev_sample
 
         return latents, context_cache
+        
