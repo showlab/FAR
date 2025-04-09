@@ -63,10 +63,10 @@ class FARPipeline(DiffusionPipeline):
     @torch.no_grad()
     def generate(
         self,
-        context_sequence,
         unroll_length,
         guidance_scale,
         context_timestep_idx=-1,
+        context_sequence=None,
         conditions=None,
         generator: Optional[Union[torch.Generator, List[torch.Generator]]] = None,
         num_inference_steps: int = 50,
@@ -75,7 +75,10 @@ class FARPipeline(DiffusionPipeline):
         output_type: Optional[str] = 'pil',
         return_dict: bool = True,
     ):
-        batch_size, current_context_length = context_sequence.shape[0], context_sequence.shape[1]
+        if context_sequence is None:
+            batch_size, current_context_length = 1, 0
+        else:
+            batch_size, current_context_length = context_sequence.shape[0], context_sequence.shape[1]
 
         if current_context_length == 0:
             latents = None
