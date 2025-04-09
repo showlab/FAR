@@ -19,8 +19,8 @@
 
 ## 📢 News
 
-* **2025-04:** Release Colab Demo for Quick Inference! 🎉 <a href="https://colab.research.google.com/drive/1XK4shPcZgJBUdJC3skNz9iq1Dc1UNj0n?usp=drive_link"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="google colab logo"></a>
-* **2025-03:** Paper and Code of [FAR](https://farlongctx.github.io/) are released! 🎉
+* **2025-04:** Release colab demo for quick inference! 🎉 <a href="https://colab.research.google.com/drive/1XK4shPcZgJBUdJC3skNz9iq1Dc1UNj0n?usp=drive_link"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="google colab logo"></a>
+* **2025-03:** Paper and code of [FAR](https://farlongctx.github.io/) are released! 🎉
 
 
 ## 🌟 What's the Potential of FAR?
