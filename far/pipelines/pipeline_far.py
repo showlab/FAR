@@ -97,9 +97,9 @@ class FARPipeline(DiffusionPipeline):
         )
 
         if use_kv_cache:
-            context_cache = {'has_new_context': True, 'kv_cache': {}, 'cached_seqlen': 0}
+            context_cache = {'is_cache_step': True, 'kv_cache': {}, 'cached_seqlen': 0, 'multi_level_cache_init': False}
         else:
-            context_cache = {'has_new_context': True, 'kv_cache': None, 'cached_seqlen': 0}
+            context_cache = {'is_cache_step': True, 'kv_cache': None, 'cached_seqlen': 0, 'multi_level_cache_init': False}
 
         for step in tqdm(range(current_context_length, current_context_length + unroll_length)):
 
@@ -169,7 +169,7 @@ class FARPipeline(DiffusionPipeline):
         # set step values
         self.scheduler.set_timesteps(num_inference_steps)
 
-        context_cache['has_new_context'] = True if vision_context is not None else False
+        context_cache['is_cache_step'] = True if vision_context is not None else False
 
         for t in self.progress_bar(self.scheduler.timesteps):
             timesteps = t
@@ -213,7 +213,7 @@ class FARPipeline(DiffusionPipeline):
                 return_dict=False)
             noise_pred = noise_pred.to(latent_model_input.dtype)
 
-            context_cache['has_new_context'] = False
+            context_cache['is_cache_step'] = False
 
             # perform guidance
             if guidance_scale > 1:

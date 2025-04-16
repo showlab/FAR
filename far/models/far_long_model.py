@@ -4,6 +4,8 @@ from typing import Any, Dict, Optional, Tuple
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from einops import rearrange
+
 from diffusers.configuration_utils import ConfigMixin, register_to_config
 from diffusers.models.attention import FeedForward
 from diffusers.models.attention_processor import Attention
@@ -11,8 +13,6 @@ from diffusers.models.embeddings import FluxPosEmbed, LabelEmbedding, TimestepEm
 from diffusers.models.modeling_utils import ModelMixin
 from diffusers.models.normalization import LayerNorm, RMSNorm
 from diffusers.utils import is_torch_version
-from einops import rearrange
-
 from far.utils.registry import MODEL_REGISTRY
 
 
@@ -108,6 +108,8 @@ class FAR_AttnProcessor2_0:
         inner_dim = noise_key.shape[-1]
         head_dim = inner_dim // attn.heads
 
+        weight_dtype = noise_query.dtype
+
         noise_query, context_query = \
             noise_query.view(batch_size, -1, attn.heads, head_dim).transpose(1, 2), context_query.view(batch_size, -1, attn.heads, head_dim).transpose(1, 2)
         noise_key, context_key = \
@@ -125,8 +127,22 @@ class FAR_AttnProcessor2_0:
         value = torch.cat([context_value, noise_value], dim=2)
 
         if not attn.training:  # inference time
+
             if layer_kv_cache['kv_cache'] is not None:
-                raise NotImplementedError
+
+                if layer_kv_cache['is_cache_step']:  # need to record the cache
+                    if len(layer_kv_cache['kv_cache']) != 0:
+                        key = torch.cat([layer_kv_cache['kv_cache']['key'], key], dim=2)
+                        value = torch.cat([layer_kv_cache['kv_cache']['value'], value], dim=2)
+                    layer_kv_cache['kv_cache']['key'] = key[:, :, : -layer_kv_cache['token_per_frame'], :].to(weight_dtype)
+                    layer_kv_cache['kv_cache']['value'] = value[:, :, :-layer_kv_cache['token_per_frame'], :].to(weight_dtype)
+
+                    layer_kv_cache['kv_cache']['key_all'] = key[:, :, : -layer_kv_cache['noise_token_per_frame'], :].to(weight_dtype)
+                    layer_kv_cache['kv_cache']['value_all'] = value[:, :, :-layer_kv_cache['noise_token_per_frame'], :].to(weight_dtype)
+                else:
+                    if len(layer_kv_cache['kv_cache']) != 0:
+                        key = torch.cat([layer_kv_cache['kv_cache']['key_all'], key], dim=2)
+                        value = torch.cat([layer_kv_cache['kv_cache']['value_all'], value], dim=2)
 
             attention_mask = attention_mask[:, -query.shape[2]:, :] if attention_mask is not None else None
             query_rotary_emb = (image_rotary_emb[0][-query.shape[2]:, :], image_rotary_emb[1][-query.shape[2]:, :])
@@ -407,6 +423,7 @@ class FAR_Long(ModelMixin, ConfigMixin):
 
         # step 1: pack latent sequence (and compute rope)
         noise_hidden_states = hidden_states[:, num_context_frames:]
+        noise_action = conditions['action'][:, num_context_frames:]
         noise_timestep = timestep[:, num_context_frames:]
         noise_token_per_frame = (height // self.config.patch_size) * (width // self.config.patch_size)
         noise_hidden_states = self._pack_latent_sequence(noise_hidden_states, patch_size=self.config.patch_size)
@@ -421,6 +438,7 @@ class FAR_Long(ModelMixin, ConfigMixin):
             dtype=hidden_states.dtype)
 
         context_hidden_states = hidden_states[:, :num_context_frames]
+        context_action = conditions['action'][:, :num_context_frames]
         context_timestep = timestep[:, :num_context_frames] * 2
         context_token_per_frame = (height // self.config.context_patch_size) * (width // self.config.context_patch_size)
         context_hidden_states = self._pack_latent_sequence(context_hidden_states, patch_size=self.config.context_patch_size)
@@ -432,11 +450,51 @@ class FAR_Long(ModelMixin, ConfigMixin):
             patch_size=self.config.context_patch_size,
             device=hidden_states.device,
             dtype=hidden_states.dtype)
-        context_seq_len = context_token_per_frame * num_context_frames
 
         if context_cache['kv_cache'] is not None:
-            # todo: implement kv cache for long short-term modeling
-            raise NotImplementedError
+            if context_cache['is_cache_step'] is True:
+
+                if hidden_states.shape[1] <= self.config.short_term_ctx_winsize:
+
+                    # encode new context and current noise
+                    current_seq_len = noise_hidden_states.shape[1] - context_cache['cached_seqlen']
+                    context_cache['cached_seqlen'] = noise_hidden_states.shape[1] - noise_token_per_frame
+
+                    noise_hidden_states = noise_hidden_states[:, -current_seq_len:, ...]
+                    noise_timestep = noise_timestep[:, -(current_seq_len // noise_token_per_frame):]
+
+                    if self.config.condition_cfg is not None and self.config.condition_cfg['type'] == 'action':
+                        noise_action = noise_action[:, -(current_seq_len // noise_token_per_frame):]
+
+                    token_per_frame = noise_token_per_frame
+                else:
+                    if not context_cache['multi_level_cache_init']:
+                        context_cache['cached_seqlen'] = 0
+                        context_cache['kv_cache'] = {}
+                        context_cache['multi_level_cache_init'] = True
+
+                    # encode new context and current noise
+                    current_seq_len = context_hidden_states.shape[1] - context_cache['cached_seqlen']
+                    context_cache['cached_seqlen'] = context_hidden_states.shape[1] - context_token_per_frame
+                    context_hidden_states = context_hidden_states[:, -current_seq_len:, ...]
+
+                    context_timestep = context_timestep[:, -(current_seq_len // context_token_per_frame):]
+
+                    if self.config.condition_cfg is not None and self.config.condition_cfg['type'] == 'action':
+                        context_action = context_action[:, -(current_seq_len // context_token_per_frame):]
+
+                    token_per_frame = context_token_per_frame + noise_token_per_frame * self.config.short_term_ctx_winsize
+            else:
+                noise_hidden_states = noise_hidden_states[:, -noise_token_per_frame:, ...]
+                noise_timestep = noise_timestep[:, -1:]
+
+                if self.config.condition_cfg is not None and self.config.condition_cfg['type'] == 'action':
+                    noise_action = noise_action[:, -1:]
+                token_per_frame = noise_token_per_frame
+
+                context_hidden_states = context_hidden_states[:, :0]
+                context_timestep = context_timestep[:, :0]
+                context_action = context_action[:, :0]
 
         # step 3: generate attention mask
         attention_mask = self._build_causal_mask(
@@ -468,14 +526,12 @@ class FAR_Long(ModelMixin, ConfigMixin):
             if self.config.condition_cfg['type'] == 'label':
                 raise NotImplementedError
             elif self.config.condition_cfg['type'] == 'action':
-                noise_action = rearrange(conditions['action'][:, num_context_frames:], 'b t -> (b t)')
-                noise_action_emb = self.action_embedder(noise_action)
+                noise_action_emb = self.action_embedder(rearrange(noise_action, 'b t -> (b t)'))
                 noise_action_emb = rearrange(noise_action_emb, '(b t) c -> b t c', b=batch_size)
                 noise_action_emb = noise_action_emb.repeat_interleave(noise_token_per_frame, dim=1)
                 noise_temb = noise_temb + noise_action_emb
 
-                context_action = rearrange(conditions['action'][:, :num_context_frames], 'b t -> (b t)')
-                context_action_emb = self.action_embedder(context_action)
+                context_action_emb = self.action_embedder(rearrange(context_action, 'b t -> (b t)'))
                 context_action_emb = rearrange(context_action_emb, '(b t) c -> b t c', b=batch_size)
                 context_action_emb = context_action_emb.repeat_interleave(context_token_per_frame, dim=1)
                 context_temb = context_temb + context_action_emb
@@ -492,8 +548,20 @@ class FAR_Long(ModelMixin, ConfigMixin):
 
             if context_cache['kv_cache'] is None:
                 layer_kv_cache = {'kv_cache': None}
+            elif index_block not in context_cache['kv_cache']:
+                layer_kv_cache = {
+                    'is_cache_step': context_cache['is_cache_step'],
+                    'kv_cache': {},
+                    'token_per_frame': token_per_frame,
+                    'noise_token_per_frame': noise_token_per_frame
+                }
             else:
-                raise NotImplementedError
+                layer_kv_cache = {
+                    'is_cache_step': context_cache['is_cache_step'],
+                    'kv_cache': context_cache['kv_cache'][index_block],
+                    'token_per_frame': token_per_frame,
+                    'noise_token_per_frame': noise_token_per_frame
+                }
 
             if self.training and self.gradient_checkpointing:
 
@@ -531,10 +599,12 @@ class FAR_Long(ModelMixin, ConfigMixin):
                 context_cache['kv_cache'][index_block] = layer_kv_cache['kv_cache']
 
         hidden_states = self.norm_out(hidden_states, temb)
-        output, context_output = self.proj_out(hidden_states[:, context_seq_len:]), self.context_proj_out(hidden_states[:, :context_seq_len])
+        output, context_output = \
+            self.proj_out(hidden_states[:, context_info['context_seq_len']:]), self.context_proj_out(hidden_states[:, :context_info['context_seq_len']])
 
         if context_cache['kv_cache'] is not None:
-            raise NotImplementedError
+            output = output[:, -noise_token_per_frame:, :]
+            output = self._unpack_latent_sequence(output, num_frames=1, height=height, width=width, patch_size=self.config.patch_size)
         else:
             output = self._unpack_latent_sequence(output, num_frames=num_frames, height=height, width=width, patch_size=self.config.patch_size)
             context_output = self._unpack_latent_sequence(

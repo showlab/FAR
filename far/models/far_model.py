@@ -122,7 +122,7 @@ class FAR_AttnProcessor2_0:
                     key = torch.cat([layer_kv_cache['kv_cache']['key'], key], dim=2)
                     value = torch.cat([layer_kv_cache['kv_cache']['value'], value], dim=2)
 
-                if layer_kv_cache['has_new_context'] is True:  # need to record the cache
+                if layer_kv_cache['is_cache_step']:  # need to record the cache
                     layer_kv_cache['kv_cache']['key'] = key[:, :, : -layer_kv_cache['token_per_frame'], :].to(weight_dtype)
                     layer_kv_cache['kv_cache']['value'] = value[:, :, :-layer_kv_cache['token_per_frame'], :].to(weight_dtype)
 
@@ -368,7 +368,7 @@ class FAR(ModelMixin, ConfigMixin):
             timestep = timestep.unsqueeze(-1).repeat((1, num_frames))
 
         if context_cache['kv_cache'] is not None:
-            if context_cache['has_new_context'] is True:
+            if context_cache['is_cache_step'] is True:
                 # encode new context and current noise
                 current_seq_len = hidden_states.shape[1] - context_cache['cached_seqlen']
                 context_cache['cached_seqlen'] = hidden_states.shape[1] - token_per_frame
@@ -420,13 +420,13 @@ class FAR(ModelMixin, ConfigMixin):
                 layer_kv_cache = {'kv_cache': None}
             elif index_block not in context_cache['kv_cache']:
                 layer_kv_cache = {
-                    'has_new_context': context_cache['has_new_context'],
+                    'is_cache_step': context_cache['is_cache_step'],
                     'kv_cache': {},
                     'token_per_frame': token_per_frame
                 }
             else:
                 layer_kv_cache = {
-                    'has_new_context': context_cache['has_new_context'],
+                    'is_cache_step': context_cache['is_cache_step'],
                     'kv_cache': context_cache['kv_cache'][index_block],
                     'token_per_frame': token_per_frame
                 }
