@@ -144,6 +144,10 @@ def train(args):
                 log_vars = {'iter': global_step}
                 log_vars.update({'lrs': lr_scheduler.get_last_lr()})
                 log_vars.update(log_dict)
+                
+                peak_mem = torch.cuda.max_memory_allocated() / (1024 ** 2)
+                log_vars['peak_mem (MB)'] = round(peak_mem, 2)
+                
                 msg_logger(log_vars)
 
                 if accelerator.is_main_process and wandb_logger:
