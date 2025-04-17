@@ -75,6 +75,7 @@ class FARPipeline(DiffusionPipeline):
         use_kv_cache=True,
         output_type: Optional[str] = 'pil',
         return_dict: bool = True,
+        show_progress=True
     ):
         if context_sequence is None:
             current_context_length = 0
@@ -101,7 +102,7 @@ class FARPipeline(DiffusionPipeline):
         else:
             context_cache = {'is_cache_step': True, 'kv_cache': None, 'cached_seqlen': 0, 'multi_level_cache_init': False}
 
-        for step in tqdm(range(current_context_length, current_context_length + unroll_length)):
+        for step in tqdm(range(current_context_length, current_context_length + unroll_length), disable=not show_progress):
 
             if conditions is not None and 'action' in conditions:
                 step_condition = {'action': conditions['action'][:, :step + 1]}
