@@ -19,6 +19,7 @@
 
 ## 📢 News
 
+* **2025-04:** Update multi-level KV cache for faster inference on long video. 🎉 Check our [updated paper](https://arxiv.org/abs/2503.19325) for details. We release colab demo for inference speed test. <a href="https://colab.research.google.com/drive/1XK4shPcZgJBUdJC3skNz9iq1Dc1UNj0n?usp=drive_link"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="google colab logo"></a>
 * **2025-04:** Release colab demo for quick inference! 🎉 <a href="https://colab.research.google.com/drive/1XK4shPcZgJBUdJC3skNz9iq1Dc1UNj0n?usp=drive_link"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="google colab logo"></a>
 * **2025-03:** Paper and code of [FAR](https://farlongctx.github.io/) are released! 🎉
 
@@ -45,16 +46,18 @@ Unconditional pretraining on UCF-101 achieves state-of-the-art results in both v
 <img src="./assets/performance.png" width=75%>
 <p>
 
-### 🔥 FAR supports 16x longer temporal extrapolation at test time
+### 🔥 FAR supports efficient training on long video sequences with manageable token lengths:
+
+The key technique behind this is **long short-term context modeling**, where we use regular patchification for short-term context to ensure fine-grained temporal consistency and **aggressive patchification** for long-term context to reduce redundant tokens.
 
 <p align="center">
-<img src="./assets/extrapolation.png" width=100%>
+<img src="./assets/long_short_term_ctx.png" width=100%>
 <p>
 
-### 🔥 FAR supports efficient training on long-video sequence with managable token lengths
+### 🔥 FAR exploits the multi-level KV-Cache to speed up autoregressive inference on long videos:
 
 <p align="center">
-<img src="./assets/long_short_term_ctx.jpg" width=55%>
+<img src="./assets/multi_level_kv_cache.png" width=70%><img src="./assets/kv_cache_comp.png" width=30%>
 <p>
 
 #### 📚 For more details, check out our [paper](https://arxiv.org/abs/2503.19325).
