@@ -32,7 +32,7 @@ FAR (i.e., <u>**F**</u>rame <u>**A**</u>uto<u>**R**</u>egressive Model) learns t
 
 ![dmlab_sample](./assets/pipeline.png)
 
-### 🔥 FAR achieves better convergence than video diffusion models with the same continuous latent space
+### 🔥 FAR achieves better convergence than video diffusion models with the same continuous latent space:
 
 <p align="center">
 <img src="./assets/converenge.jpg" width=55%>
