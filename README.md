@@ -70,33 +70,33 @@ We provide trained FAR models in our paper for re-implementation.
 
 We use seed-[0,2,4,6] in evaluation, following the evaluation prototype of [Latte](https://arxiv.org/abs/2401.03048):
 
-| Model (Config) | #Params | Resolution | Condition | FVD | HF Weights | Pre-Computed Samples | Train Cost (H100 Days) |
-|:-------:|:------------:|:------------:|:-----------:|:-----:|:----------:|:----------:|:----------:|
-| [FAR-L](options/train/far/video_generation/FAR_L_ucf101_uncond_res128_400K_bs32.yml) | 457 M | 128x128 | ✗ | 280 ± 11.7 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_L_UCF101_Uncond128-c19abd2c.pth) |  [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 12.2 |
-| [FAR-L](options/train/far/video_generation/FAR_L_ucf101_cond_res128_400K_bs32.yml) | 457 M | 128x128 | ✓ | 99 ± 5.9 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_L_UCF101_Cond128-c6f798bf.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 12.2 |
-| [FAR-L](options/train/far/video_generation/FAR_L_ucf101_uncond_res256_400K_bs32.yml) | 457 M | 256x256 | ✗ | 303 ± 13.5 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_L_UCF101_Uncond256-adea51e9.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 12.7 |
-| [FAR-L](options/train/far/video_generation/FAR_L_ucf101_cond_res256_400K_bs32.yml) | 457 M | 256x256 | ✓ | 113 ± 3.6 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_L_UCF101_Cond256-41c6033f.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 12.7 |
-| [FAR-XL](options/train/far/video_generation/FAR_XL_ucf101_uncond_res256_400K_bs32.yml) | 657 M | 256x256 | ✗ | 279 ± 9.2 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_XL_UCF101_Uncond256-3594ce6b.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 14.6 |
-| [FAR-XL](options/train/far/video_generation/FAR_XL_ucf101_cond_res256_400K_bs32.yml) | 657 M | 256x256 | ✓ | 108 ± 4.2 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_XL_UCF101_Cond256-28a88f56.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 14.6 |
+| Model (Config) | #Params | Resolution | Condition | FVD | HF Weights | Pre-Computed Samples | Train Cost (H100 Days) | Memory (Per GPU) |
+|:-------:|:------------:|:------------:|:-----------:|:-----:|:----------:|:----------:|:----------:|:----------:|
+| [FAR-L](options/train/far/video_generation/FAR_L_ucf101_uncond_res128_400K_bs32.yml) | 457 M | 128x128 | ✗ | 280 ± 11.7 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_L_UCF101_Uncond128-c19abd2c.pth) |  [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 12.2 | 22 G
+| [FAR-L](options/train/far/video_generation/FAR_L_ucf101_cond_res128_400K_bs32.yml) | 457 M | 128x128 | ✓ | 99 ± 5.9 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_L_UCF101_Cond128-c6f798bf.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 12.2 | 22 G
+| [FAR-L](options/train/far/video_generation/FAR_L_ucf101_uncond_res256_400K_bs32.yml) | 457 M | 256x256 | ✗ | 303 ± 13.5 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_L_UCF101_Uncond256-adea51e9.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 12.7 | 22 G
+| [FAR-L](options/train/far/video_generation/FAR_L_ucf101_cond_res256_400K_bs32.yml) | 457 M | 256x256 | ✓ | 113 ± 3.6 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_L_UCF101_Cond256-41c6033f.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 12.7 | 22 G
+| [FAR-XL](options/train/far/video_generation/FAR_XL_ucf101_uncond_res256_400K_bs32.yml) | 657 M | 256x256 | ✗ | 279 ± 9.2 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_XL_UCF101_Uncond256-3594ce6b.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 14.6 | 22 G
+| [FAR-XL](options/train/far/video_generation/FAR_XL_ucf101_cond_res256_400K_bs32.yml) | 657 M | 256x256 | ✓ | 108 ± 4.2 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/video_generation/FAR_XL_UCF101_Cond256-28a88f56.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 14.6 | 22 G
 
 ###  Short-Video Prediction
 
 We follows the evaluation prototype of [MCVD](https://arxiv.org/abs/2205.09853) and [ExtDM](https://openaccess.thecvf.com/content/CVPR2024/papers/Zhang_ExtDM_Distribution_Extrapolation_Diffusion_Model_for_Video_Prediction_CVPR_2024_paper.pdf):
 
-| Model (Config) | #Params | Dataset | PSNR | SSIM | LPIPS | FVD | HF Weights | Pre-Computed Samples | Train Cost (H100 Days) |
-|:-----:|:------------:|:------------:|:-----:|:-----:|:-----:|:-----:|:----------:|:----------:|:------:|
-| [FAR-B](options/train/far/short_video_prediction/FAR_B_ucf101_res64_200K_bs32.yml) | 130 M | UCF101 | 25.64 | 0.818 | 0.037 | 194.1 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/short_video_prediction/FAR_B_UCF101_Uncond64-381d295f.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 3.6 |
-| [FAR-B](options/train/far/short_video_prediction/FAR_B_bair_res64_200K_bs32.yml) | 130 M | BAIR (c=2, p=28) | 19.40 | 0.819 | 0.049 | 144.3 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/short_video_prediction/FAR_B_BAIR_Uncond64-1983191b.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 2.6 |
+| Model (Config) | #Params | Dataset | PSNR | SSIM | LPIPS | FVD | HF Weights | Pre-Computed Samples | Train Cost (H100 Days) | Memory (Per GPU) |
+|:-----:|:------------:|:------------:|:-----:|:-----:|:-----:|:-----:|:----------:|:----------:|:------:|:------:|
+| [FAR-B](options/train/far/short_video_prediction/FAR_B_ucf101_res64_200K_bs32.yml) | 130 M | UCF101 | 25.64 | 0.818 | 0.037 | 194.1 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/short_video_prediction/FAR_B_UCF101_Uncond64-381d295f.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 3.6 | 9 G
+| [FAR-B](options/train/far/short_video_prediction/FAR_B_bair_res64_200K_bs32.yml) | 130 M | BAIR (c=2, p=28) | 19.40 | 0.819 | 0.049 | 144.3 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/short_video_prediction/FAR_B_BAIR_Uncond64-1983191b.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 2.6 | 12 G
 
 ###  Long-Video Prediction
 
 We use seed-[0,2,4,6] in evaluation, following the evaluation prototype of [TECO](https://arxiv.org/abs/2210.02396):
 
 
-| Model (Config) | #Params | Dataset | PSNR | SSIM | LPIPS | FVD | HF Weights | Pre-Computed Samples |  Train Cost (H100 Days) |
-|:-----:|:------------:|:------------:|:-----:|:-----:|:-----:|:-----:|:----------:|:----------:|:----------:|
-| [FAR-B-Long](options/train/far/long_video_prediction/FAR_B_Long_dmlab_res64_400K_bs32.yml) | 150 M | DMLab | 22.3 | 0.687 | 0.104 | 64 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/long_video_prediction/FAR_B_Long_DMLab_Action64-c09441dc.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 17.5 |
-| [FAR-M-Long](options/train/far/long_video_prediction/FAR_M_Long_minecraft_res128_400K_bs32.yml) | 280 M | Minecraft | 16.9 | 0.448 | 0.251 | 39 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/long_video_prediction/FAR_M_Long_Minecraft_Action128-4c041561.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 18.2 |
+| Model (Config) | #Params | Dataset | PSNR | SSIM | LPIPS | FVD | HF Weights | Pre-Computed Samples |  Train Cost (H100 Days) | Memory (Per GPU) |
+|:-----:|:------------:|:------------:|:-----:|:-----:|:-----:|:-----:|:----------:|:----------:|:----------:|:----------:|
+| [FAR-B-Long](options/train/far/long_video_prediction/FAR_B_Long_dmlab_res64_400K_bs32.yml) | 150 M | DMLab | 22.3 | 0.687 | 0.104 | 64 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/long_video_prediction/FAR_B_Long_DMLab_Action64-c09441dc.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 17.5 | 13 G
+| [FAR-M-Long](options/train/far/long_video_prediction/FAR_M_Long_minecraft_res128_400K_bs32.yml) | 280 M | Minecraft | 16.9 | 0.448 | 0.251 | 39 | [Model-HF](https://huggingface.co/guyuchao/FAR_Models/resolve/main/long_video_prediction/FAR_M_Long_Minecraft_Action128-4c041561.pth) | [Google Drive](https://drive.google.com/drive/folders/1p1MvCiTfoUYAUYNqQNG6nEU02zy8U1vp?usp=drive_link) | 18.2 | 19 G
 
 ## 🔧 Dependencies and Installation
 
