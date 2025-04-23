@@ -36,7 +36,7 @@ models:
     vae:
       type: MyAutoencoderDC
       from_config: options/model_cfg/dcae/model_8x_c32_config.json
-      from_config_pretrained: experiments/pretrained_models/FAR_Models/dcae/ucf101/DCAE_ucf101_res64_bs128_200K/models/checkpoint-200000/ema.pth
+      from_config_pretrained: experiments/pretrained_models/FAR_Models/dcae/DCAE_UCF101_Res64-9da18dcf.pth
     scheduler:
       from_pretrained: options/model_cfg/far/scheduler_config.json
   clean_context_ratio: 0.1
